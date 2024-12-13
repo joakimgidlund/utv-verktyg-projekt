@@ -6,7 +6,7 @@ public class Product {
     private String type;
 
 
-    public void Products(int price, String type) {
+    public Product(int price, String type) {
         this.price = price;
         this.type = type;
 
