@@ -31,7 +31,7 @@ public class InventoryTest {
     @Test
     public void testRemoveProduct() {
         Inventory tempInventory = inventory;
-        tempInventory.removeProduct(product);
+        tempInventory.removeProduct("Bok");
         assertFalse(tempInventory.getInventory().containsKey(product),
                 "Inventory doesn't contain product after removal.");
     }

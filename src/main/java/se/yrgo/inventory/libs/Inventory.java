@@ -15,7 +15,7 @@ public class Inventory {
     }
 
     public void addProduct(Product p, int quantity) throws ProductAlreadyExistsException {
-        if(!inventoryMap.containsKey(p)) {
+        if(inventoryMap.entrySet().stream().noneMatch(e -> e.getKey().getType().equals(p.getType()))) {
             inventoryMap.put(p, quantity);
         }
         else {
@@ -23,8 +23,8 @@ public class Inventory {
         }
     }
 
-    public void removeProduct(Product p) {
-        inventoryMap.remove(p);
+    public void removeProduct(String pName) {
+        inventoryMap.entrySet().removeIf(e -> e.getKey().getType().toLowerCase().equals(pName));
     }
 
     public int getProductInventory(Product p) {
@@ -39,8 +39,14 @@ public class Inventory {
             throw new ProductNotFoundException("No such product in inventory.");
         }
     }
-    @Override
-    public String toString() {
-        return String.format("");
+
+    public void printInventory() {
+        if(inventoryMap.isEmpty()) {
+            System.out.println("Inventory empty.");
+        }
+        else {
+            inventoryMap.entrySet()
+                    .forEach(e -> System.out.printf("Product: %-10sQuantity: %d%n", e.getKey().getType(), e.getValue()));
+        }
     }
 }
