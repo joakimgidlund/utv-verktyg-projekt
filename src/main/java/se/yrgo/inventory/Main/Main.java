@@ -67,7 +67,7 @@ public class Main {
 
         if(!i.getInventory().isEmpty()) {
             System.out.print("Type product name to remove: ");
-            String pName = scan.nextLine().toLowerCase();
+            String pName = scan.nextLine();
             i.removeProduct(pName);
         }
 

@@ -24,7 +24,7 @@ public class Inventory {
     }
 
     public void removeProduct(String pName) {
-        inventoryMap.entrySet().removeIf(e -> e.getKey().getType().toLowerCase().equals(pName));
+        inventoryMap.entrySet().removeIf(e -> e.getKey().getType().toLowerCase().equals(pName.toLowerCase()));
     }
 
     public int getProductInventory(Product p) {
