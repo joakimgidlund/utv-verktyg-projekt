@@ -1,6 +1,6 @@
 package se.yrgo.inventory.libs;
 
-public class Product {
+public class Product implements Comparable<Product> {
 
     private int price;
     private String type;
@@ -37,6 +37,8 @@ public class Product {
         this.type = type;
     }
 
-
+    public int compareTo(Product o) {
+        return type.compareTo(o.type);
+    }
 }
 

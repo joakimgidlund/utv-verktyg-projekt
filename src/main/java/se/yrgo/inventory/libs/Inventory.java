@@ -16,7 +16,7 @@ public class Inventory {
 
     public void addProduct(Product p) throws ProductAlreadyExistsException {
         for (Product prod : inventory) {
-            if (prod.getType().equals(p.getType())) {
+            if (prod.compareTo(p) == 0) {
                 throw new ProductAlreadyExistsException("Product already exists.");
             }
         }
