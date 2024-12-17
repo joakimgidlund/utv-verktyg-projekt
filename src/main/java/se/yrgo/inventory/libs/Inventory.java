@@ -1,52 +1,49 @@
 package se.yrgo.inventory.libs;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Inventory {
 
-    private HashMap<Product, Integer> inventoryMap;
+    private ArrayList<Product> inventory;
 
     public Inventory() {
-        inventoryMap = new HashMap<Product, Integer>();
+        inventory = new ArrayList<Product>();
     }
 
-    public HashMap<Product, Integer> getInventory() {
-        return inventoryMap;
+    public ArrayList<Product> getInventory() {
+        return inventory;
     }
 
-    public void addProduct(Product p, int quantity) throws ProductAlreadyExistsException {
-        if(inventoryMap.entrySet().stream().noneMatch(e -> e.getKey().getType().equals(p.getType()))) {
-            inventoryMap.put(p, quantity);
+    public void addProduct(Product p) throws ProductAlreadyExistsException {
+        for (Product prod : inventory) {
+            if (prod.getType().equals(p.getType())) {
+                throw new ProductAlreadyExistsException("Product already exists.");
+            }
         }
-        else {
-            throw new ProductAlreadyExistsException("Product already in inventory.");
-        }
+        inventory.add(p);
+
     }
 
     public void removeProduct(String pName) {
-        inventoryMap.entrySet().removeIf(e -> e.getKey().getType().toLowerCase().equals(pName.toLowerCase()));
+        inventory.removeIf(p -> p.getType().equalsIgnoreCase(pName));
     }
 
     public int getProductInventory(Product p) {
-        return inventoryMap.get(p);
-    }
-
-    public void addProductInventory(Product p, int quantity) throws ProductNotFoundException {
-        if(inventoryMap.containsKey(p)) {
-            inventoryMap.put(p, inventoryMap.get(p) + quantity);
+        for (Product prod : inventory) {
+            if (prod.equals(p)) {
+                return prod.getQuantity();
+            }
         }
-        else {
-            throw new ProductNotFoundException("No such product in inventory.");
-        }
+        return -1;
     }
 
     public void printInventory() {
-        if(inventoryMap.isEmpty()) {
+        if (inventory.isEmpty()) {
             System.out.println("Inventory empty.");
-        }
-        else {
-            inventoryMap.entrySet()
-                    .forEach(e -> System.out.printf("Product: %-10sQuantity: %d%n", e.getKey().getType(), e.getValue()));
+        } else {
+            inventory.stream()
+                    .forEach(e -> System.out.printf("Product: %-10sQuantity: %d%n",
+                            e.getType(), e.getQuantity()));
         }
     }
 }

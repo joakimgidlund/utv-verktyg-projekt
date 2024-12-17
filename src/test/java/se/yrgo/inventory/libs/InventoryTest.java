@@ -10,21 +10,21 @@ public class InventoryTest {
 
     public InventoryTest() throws ProductAlreadyExistsException {
         inventory = new Inventory();
-        product = new Product(100, "Bok");
-        inventory.addProduct(product, 1);
+        product = new Product(100, "Bok", 1);
+        inventory.addProduct(product);
     }
 
     @Test
     public void testAddProduct() {
         assertNotNull(inventory, "Inventory not null after added product.");
-        assertTrue(inventory.getInventory().containsKey(product),
+        assertTrue(inventory.getInventory().contains(product),
                 "Checking product that product exists in inventory.");
 
         assertEquals(1, inventory.getProductInventory(product),
                 "Checking correct quantity added.");
 
         assertThrows(ProductAlreadyExistsException.class, () ->
-            inventory.addProduct(product, 1),
+            inventory.addProduct(product),
                 "Testing ProductAlreadyExistsException.");
     }
 
@@ -32,7 +32,7 @@ public class InventoryTest {
     public void testRemoveProduct() {
         Inventory tempInventory = inventory;
         tempInventory.removeProduct("Bok");
-        assertFalse(tempInventory.getInventory().containsKey(product),
+        assertFalse(tempInventory.getInventory().contains(product),
                 "Inventory doesn't contain product after removal.");
     }
 
@@ -40,16 +40,5 @@ public class InventoryTest {
     public void testGetProductInventory() {
         assertEquals(1, inventory.getProductInventory(product),
                 "Product quantity is correct.");
-    }
-
-    @Test
-    public void testAddProductInventory() throws ProductNotFoundException {
-        inventory.addProductInventory(product, 1);
-        assertEquals(2, inventory.getProductInventory(product));
-
-        Product testProduct = new Product(50, "Test");
-        assertThrows(ProductNotFoundException.class, () ->
-                inventory.addProductInventory(testProduct, 2),
-                "Testing ProductNotFoundException.");
     }
 }

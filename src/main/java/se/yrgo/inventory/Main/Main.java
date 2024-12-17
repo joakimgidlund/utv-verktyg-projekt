@@ -15,7 +15,7 @@ public class Main {
             System.out.printf("Make your selection below:%n");
             System.out.printf("1. Add product to inventory%n" +
                     "2. Remove product from inventory%n" +
-                    "3. View current inventory of a product%n" +
+                    "3. View current inventory%n" +
                     "4. List suppliers%n" +
                     "0. Exit%n");
 
@@ -51,13 +51,12 @@ public class Main {
         System.out.print("Quantity to add: ");
         int quantity = scan.nextInt();
         try {
-            inventory.addProduct(new Product(100, "Juice"), quantity);
-            inventory.addProduct(new Product(100, "Potatis"), quantity);
-            inventory.addProduct(new Product(100, "Banan"), quantity);
-            inventory.addProduct(new Product(100, "Äpple"), quantity);
+            inventory.addProduct(new Product(100, "Juice", quantity));
+            inventory.addProduct(new Product(100, "Potatis", quantity));
+            inventory.addProduct(new Product(100, "Banan", quantity));
+            inventory.addProduct(new Product(100, "Äpple", quantity));
         } catch (ProductAlreadyExistsException ex) {
-            System.err.println(ex.getMessage());
-            System.out.println();
+            System.out.println(ex.getMessage());
         }
     }
     private static void removeProduct(Scanner scan, Inventory i) {
