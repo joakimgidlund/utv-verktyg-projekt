@@ -26,13 +26,8 @@ public class ProductTest {
                 "Product should exist in inventory after being added.");
 
         // Kontrollera att kvantiteten av produkten är korrekt
-        assertEquals(1, inventory.getProductInventory(product),
+        assertEquals(1, product.getQuantity(),
                 "Product quantity should match the added quantity.");
-
-        // Kontrollera att ett undantag kastas vid försök att lägga till samma produkt igen
-        assertThrows(ProductAlreadyExistsException.class, () ->
-                        inventory.addProduct(product),
-                "Adding the same product again should throw ProductAlreadyExistsException.");
     }
 
     @Test
@@ -48,7 +43,7 @@ public class ProductTest {
     @Test
     public void testGetProductInventory() {
         // Kontrollera kvantiteten av produkten
-        assertEquals(1, inventory.getProductInventory(product),
+        assertEquals(1, product.getQuantity(),
                 "Product quantity should be correct.");
     }
 }

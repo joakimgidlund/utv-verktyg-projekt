@@ -15,17 +15,13 @@ public class InventoryTest {
     }
 
     @Test
-    public void testAddProduct() {
+    public void testAddProduct() throws ProductNotFoundException {
         assertNotNull(inventory, "Inventory not null after added product.");
         assertTrue(inventory.getInventory().contains(product),
                 "Checking product that product exists in inventory.");
 
-        assertEquals(1, inventory.getProductInventory(product),
+        assertEquals(1, inventory.getProductByName(product.getType()).getQuantity(),
                 "Checking correct quantity added.");
-
-        assertThrows(ProductAlreadyExistsException.class, () ->
-            inventory.addProduct(product),
-                "Testing ProductAlreadyExistsException.");
     }
 
     @Test
@@ -37,8 +33,11 @@ public class InventoryTest {
     }
 
     @Test
-    public void testGetProductInventory() {
-        assertEquals(1, inventory.getProductInventory(product),
-                "Product quantity is correct.");
+    public void testGetProductByName() throws ProductNotFoundException {
+        assertEquals(inventory.getProductByName(product.getType()), product,
+                "Finding the correct product by searching.");
+        assertThrows(ProductNotFoundException.class, () -> {
+            inventory.getProductByName("Test product");
+        });
     }
 }

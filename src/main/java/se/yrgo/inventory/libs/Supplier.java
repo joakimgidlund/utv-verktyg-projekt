@@ -4,12 +4,22 @@ public class Supplier {
     private String name;
     private String address;
     private String phone;
+    Inventory inventory;
 
     public Supplier(String name, String address, String phone) {
         this.name = name;
         this.address = address;
         this.phone = phone;
     }
+
+    public Supplier(String name, String address, String phone, Inventory inventory) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.inventory = inventory;
+    }
+
+    public Inventory getInventory() { return inventory; }
 
     public String getName() {
         return name;
