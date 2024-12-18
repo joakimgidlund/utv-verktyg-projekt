@@ -1,5 +1,7 @@
 package se.yrgo.inventory.libs;
 
+import java.util.Objects;
+
 public class Product implements Comparable<Product> {
 
     private int price;
@@ -39,6 +41,22 @@ public class Product implements Comparable<Product> {
 
     public int compareTo(Product o) {
         return type.compareTo(o.type);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Product product = (Product) obj;
+        return price == product.price &&
+                quantity == product.quantity &&
+                type.equals(product.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(price, type, quantity);
     }
 }
 
