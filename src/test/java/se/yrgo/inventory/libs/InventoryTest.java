@@ -8,7 +8,7 @@ public class InventoryTest {
     private Inventory inventory;
     private Product product;
 
-    public InventoryTest() throws ProductAlreadyExistsException {
+    public InventoryTest() {
         inventory = new Inventory();
         product = new Product(100, "Bok", 1);
         inventory.addProduct(product);

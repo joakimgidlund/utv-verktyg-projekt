@@ -39,7 +39,7 @@ public class Inventory {
 
     public void printInventory() {
         if (inventory.isEmpty()) {
-            System.out.printf("Inventory empty.%n%n");
+            System.out.printf("Inventory empty.%n");
         } else {
             inventory.forEach(e -> System.out.printf("Product: %-10sQuantity: %d%n",
                     e.getType(), e.getQuantity()));
