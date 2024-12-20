@@ -107,33 +107,22 @@ public class Main {
 
         System.out.print("Quantity to purchase: ");
         int quantity = scan.nextInt();
-        boolean forRemoval = false;
 
         //Temporary product to add later
         Product insert = list.get(productNr);
 
         //If quantity selected is too high we remove from supplier inventory.
-        if (insert.getQuantity() < quantity) {
+        if (insert.getQuantity() <= quantity) {
             System.out.println("Not enough in inventory, purchasing all.");
             quantity = insert.getQuantity();
-            forRemoval = true;
         }
 
         inventory.addProduct(new Product(insert.getPrice(), insert.getType(), quantity));
 
-        //This sets the supplier product to the correct quantity
-        suppliers.get(choice).getInventory()
-                .getInventory()
-                .get(productNr)
-                .setQuantity(insert.getQuantity() - quantity);
-
-        //If we bought the entire stock we remove the product
-        if (forRemoval) {
-            try {
-                suppliers.get(choice - 1).getInventory().removeProduct(insert.getType(), quantity);
-            } catch (ProductNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
+        try {
+            suppliers.get(choice).getInventory().removeProduct(insert.getType(), quantity);
+        } catch (ProductNotFoundException e) {
+            System.out.println(e.getMessage());
         }
         System.out.println();
     }
@@ -143,8 +132,9 @@ public class Main {
      * First prints and then lets the user select the product
      * by name. Find the product by product name and then removes it
      * from the inventory if quantity removed is higher than available stock.
+     *
      * @param scan
-     * @param i the user's inventory
+     * @param i    the user's inventory
      */
     private static void removeProduct(Scanner scan, Inventory i) {
         i.printInventory();
@@ -173,6 +163,7 @@ public class Main {
 
     /**
      * Lists the provided inventory.
+     *
      * @param i
      */
     private static void listInventory(Inventory i) {
@@ -197,6 +188,7 @@ public class Main {
 
     /**
      * Prints the raw data about suppliers.
+     *
      * @param suppliers
      */
     private static void printSupplierInfo(List<Supplier> suppliers) {
