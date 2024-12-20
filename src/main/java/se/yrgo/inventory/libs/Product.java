@@ -117,3 +117,6 @@ public class Product implements Comparable<Product> {
         return Objects.hash(price, type, quantity);
     }
 }
+
+
+// la till en kommentar här bara för att den ville inte commita filen annars..
