@@ -7,11 +7,22 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-
+/**
+ * Inventory management software. Handles a set of suppliers and
+ * allows purchasing to your inventory and removing products.
+ *
+ * @author joakimgidlund
+ */
 public class Main {
 
     public static ArrayList<Supplier> suppliers;
 
+    /**
+     * Main shows the main menu and lets the user
+     * select an option.
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         boolean appLoop = true;
         Inventory inventory = new Inventory();
@@ -64,6 +75,15 @@ public class Main {
         }
     }
 
+    /**
+     * This method handles adding products to the specified inventory.
+     * It's written to handle expansion of adding new products
+     * to a supplier's inventory in the "future".
+     * Handles bad inputs and returns to the main menu.
+     *
+     * @param scan      Scanner
+     * @param inventory the user's inventory.
+     */
     private static void addProduct(Scanner scan, Inventory inventory) {
         System.out.printf("Each supplier carries product, choose which supplier to buy from.%n");
         listSuppliers();
@@ -79,7 +99,7 @@ public class Main {
         List<Product> list = suppliers.get(choice).getInventory().getInventory();
 
         System.out.print("Product number: ");
-        int productNr = scan.nextInt();
+        int productNr = scan.nextInt() - 1;
         if (productNr > list.size() - 1 || productNr < 0) {
             System.out.println("That product doesn't exist.");
             return;
@@ -87,97 +107,118 @@ public class Main {
 
         System.out.print("Quantity to purchase: ");
         int quantity = scan.nextInt();
-        boolean forRemoval = false;
 
+        //Temporary product to add later
         Product insert = list.get(productNr);
 
-        if (insert.getQuantity() < quantity) {
+        //If quantity selected is too high we remove from supplier inventory.
+        if (insert.getQuantity() <= quantity) {
             System.out.println("Not enough in inventory, purchasing all.");
             quantity = insert.getQuantity();
-            forRemoval = true;
         }
 
-        insert.setQuantity(quantity);
         inventory.addProduct(new Product(insert.getPrice(), insert.getType(), quantity));
 
-        suppliers.get(choice).getInventory()
-                .getInventory()
-                .get(productNr)
-                .setQuantity(insert.getQuantity() - quantity);
-
-        if (forRemoval) {
-            suppliers.get(choice - 1).getInventory().removeProduct(insert.getType());
+        try {
+            suppliers.get(choice).getInventory().removeProduct(insert.getType(), quantity);
+        } catch (ProductNotFoundException e) {
+            System.out.println(e.getMessage());
         }
         System.out.println();
     }
 
-private static void removeProduct(Scanner scan, Inventory i) {
-    i.printInventory();
+    /**
+     * Handles the removal of a product.
+     * First prints and then lets the user select the product
+     * by name. Find the product by product name and then removes it
+     * from the inventory if quantity removed is higher than available stock.
+     *
+     * @param scan
+     * @param i    the user's inventory
+     */
+    private static void removeProduct(Scanner scan, Inventory i) {
+        i.printInventory();
 
-    scan.nextLine(); //move scanner to next line.
+        scan.nextLine(); //move scanner to next line.
 
-    if (!i.getInventory().isEmpty()) {
-        try {
-            System.out.print("Type product name to remove: ");
-            String pName = scan.nextLine();
-            Product product = i.getProductByName(pName);
-            if (product == null) {
-                throw new ProductNotFoundException("Product not found.");
+        if (!i.getInventory().isEmpty()) {
+            try {
+                System.out.print("Type product name to remove: ");
+                String pName = scan.nextLine();
+                Product product = i.getProductByName(pName);
+                if (product == null) {
+                    System.out.println("Product not found.");
+                    return;
+                }
+                System.out.print("Quantity to remove: ");
+                int quantity = scan.nextInt();
+
+                i.removeProduct(pName, quantity);
+            } catch (ProductNotFoundException ex) {
+                System.out.println(ex.getMessage());
             }
-            System.out.print("Quantity to remove: ");
-            int quantity = scan.nextInt();
-
-            if (product.getQuantity() < quantity) {
-                i.removeProduct(pName);
-                System.out.printf("Product removed from inventory.%n%n");
-            } else {
-                product.setQuantity(product.getQuantity() - quantity);
-            }
-        } catch (ProductNotFoundException ex) {
-            System.out.println(ex.getMessage());
         }
+
     }
 
-}
-
-private static void listInventory(Inventory i) {
-    i.printInventory();
-    System.out.println();
-}
-
-private static void listSuppliers() {
-    int suppCount = 1;
-    for (Supplier s : suppliers) {
-        System.out.printf("%d: %s%n----------------------------%n", suppCount, s.getName());
-        s.getInventory().printSupplierInventory();
-        System.out.println("----------------------------");
-        suppCount++;
+    /**
+     * Lists the provided inventory.
+     *
+     * @param i
+     */
+    private static void listInventory(Inventory i) {
+        i.printInventory();
+        System.out.println();
     }
-    System.out.println();
-}
 
-private static void printSupplierInfo(List<Supplier> suppliers) {
-    for (Supplier s : suppliers) {
-        System.out.println(s.toString());
+    /**
+     * Calls printSupplierInventory to list their inventory,
+     * but also adds some formatting for readability.
+     */
+    private static void listSuppliers() {
+        int suppCount = 1;
+        for (Supplier s : suppliers) {
+            System.out.printf("%d: %s%n----------------------------%n", suppCount, s.getName());
+            s.getInventory().printSupplierInventory();
+            System.out.println("----------------------------");
+            suppCount++;
+        }
+        System.out.println();
     }
-    System.out.println();
-}
 
-private static Inventory populateAhlsell() {
-    Inventory inventory = new Inventory();
-    inventory.addProduct(new Product(1, "Nail", 10500));
-    inventory.addProduct(new Product(2, "Nut", 1000));
-    inventory.addProduct(new Product(150, "Hammer", 2000));
-    inventory.addProduct(new Product(1999, "Work pants", 100));
-    return inventory;
-}
+    /**
+     * Prints the raw data about suppliers.
+     *
+     * @param suppliers
+     */
+    private static void printSupplierInfo(List<Supplier> suppliers) {
+        for (Supplier s : suppliers) {
+            System.out.println(s.toString());
+        }
+        System.out.println();
+    }
 
-private static Inventory populateAxfood() {
-    Inventory inventory = new Inventory();
-    inventory.addProduct(new Product(3, "Apple", 450));
-    inventory.addProduct(new Product(5, "Banana", 1000));
-    inventory.addProduct(new Product(6, "Orange", 2000));
-    inventory.addProduct(new Product(10, "Cinnamon", 100));
-    return inventory;
-}
+    /**
+     * Method to fill supplier inventory with test data.
+     */
+    private static Inventory populateAhlsell() {
+        Inventory inventory = new Inventory();
+        inventory.addProduct(new Product(1, "Nail", 10500));
+        inventory.addProduct(new Product(2, "Nut", 1000));
+        inventory.addProduct(new Product(150, "Hammer", 2000));
+        inventory.addProduct(new Product(1999, "Work pants", 100));
+        return inventory;
+    }
+
+    /**
+     * Method to fill supplier inventory with test data.
+     */
+    private static Inventory populateAxfood() {
+        Inventory inventory = new Inventory();
+        inventory.addProduct(new Product(3, "Apple", 450));
+        inventory.addProduct(new Product(5, "Banana", 1000));
+        inventory.addProduct(new Product(6, "Orange", 2000));
+        inventory.addProduct(new Product(10, "Cinnamon", 100));
+        return inventory;
+    }
 }
