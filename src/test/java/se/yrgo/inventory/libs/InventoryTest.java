@@ -3,6 +3,10 @@ package se.yrgo.inventory.libs;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Inventory class tests.
+ * @author joakimgidlund
+ */
 public class InventoryTest {
 
     private Inventory inventory;
@@ -10,7 +14,7 @@ public class InventoryTest {
 
     public InventoryTest() {
         inventory = new Inventory();
-        product = new Product(100, "Bok", 1);
+        product = new Product(100, "Book", 100);
         inventory.addProduct(product);
     }
 
@@ -20,14 +24,21 @@ public class InventoryTest {
         assertTrue(inventory.getInventory().contains(product),
                 "Checking product that product exists in inventory.");
 
-        assertEquals(1, inventory.getProductByName(product.getType()).getQuantity(),
+        assertEquals(100, inventory.getProductByName(product.getType()).getQuantity(),
                 "Checking correct quantity added.");
     }
 
     @Test
-    public void testRemoveProduct() {
+    public void testRemoveProduct() throws ProductNotFoundException {
         Inventory tempInventory = inventory;
-        tempInventory.removeProduct("Bok");
+        Product tempProduct = new Product(100, "Nail", 100);
+        tempInventory.addProduct(tempProduct);
+
+        tempInventory.removeProduct("nail", 50);
+        assertEquals(50, tempInventory.getProductByName("nail").getQuantity(),
+                "Checking correct quantity removed.");
+
+        tempInventory.removeProduct("Book", 100);
         assertFalse(tempInventory.getInventory().contains(product),
                 "Inventory doesn't contain product after removal.");
     }

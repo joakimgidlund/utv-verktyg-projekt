@@ -7,7 +7,12 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-
+/**
+ *Inventory management software. Handles a set of suppliers and
+ * allows purchasing to your inventory and removing products.
+ *
+ * @author joakimgidlund
+ */
 public class Main {
 
     public static ArrayList<Supplier> suppliers;
@@ -79,7 +84,7 @@ public class Main {
         List<Product> list = suppliers.get(choice).getInventory().getInventory();
 
         System.out.print("Product number: ");
-        int productNr = scan.nextInt();
+        int productNr = scan.nextInt() - 1;
         if (productNr > list.size() - 1 || productNr < 0) {
             System.out.println("That product doesn't exist.");
             return;
@@ -97,7 +102,6 @@ public class Main {
             forRemoval = true;
         }
 
-        insert.setQuantity(quantity);
         inventory.addProduct(new Product(insert.getPrice(), insert.getType(), quantity));
 
         suppliers.get(choice).getInventory()
@@ -106,7 +110,11 @@ public class Main {
                 .setQuantity(insert.getQuantity() - quantity);
 
         if (forRemoval) {
-            suppliers.get(choice - 1).getInventory().removeProduct(insert.getType());
+            try {
+                suppliers.get(choice - 1).getInventory().removeProduct(insert.getType(), quantity);
+            } catch (ProductNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
         }
         System.out.println();
     }
@@ -122,17 +130,13 @@ private static void removeProduct(Scanner scan, Inventory i) {
             String pName = scan.nextLine();
             Product product = i.getProductByName(pName);
             if (product == null) {
-                throw new ProductNotFoundException("Product not found.");
+                System.out.println("Product not found.");
+                return;
             }
             System.out.print("Quantity to remove: ");
             int quantity = scan.nextInt();
 
-            if (product.getQuantity() < quantity) {
-                i.removeProduct(pName);
-                System.out.printf("Product removed from inventory.%n%n");
-            } else {
-                product.setQuantity(product.getQuantity() - quantity);
-            }
+            i.removeProduct(pName, quantity);
         } catch (ProductNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
